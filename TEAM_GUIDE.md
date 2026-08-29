@@ -13,7 +13,7 @@
 首次使用，克隆仓库到本地：
 
 ```bash
-git clone https://github.com/yyf0507/Quant-competition-260829.git
+git clone https://github.com/shu476891497-hash/Quant-competition-260829.git
 ```
 
 如果你已有本地文件，把它们移入克隆出来的目录即可。
