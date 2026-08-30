@@ -47,10 +47,22 @@ git push origin 你的分支名
 
 然后在 GitHub 网页上发起 **Pull Request**，由其他成员审查后合并到 main。
 
+发起 Pull Request 前必须通过：
+
+```bash
+python -m ruff check .
+python -m pytest
+```
+
+新增因子时，只在 `src/quantcta/factors/` 增加普通函数及对应测试，不要修改
+`backtest/engine.py`。如果确实需要改变统一回测口径，应单独发 PR 并由至少一名
+核心框架负责人复核。
+
 ## 四、提交规范
 
 - 提交信息简短描述改了什么（中文或英文均可）。
 - 不要把数据文件、日志、密钥提交入库（`.gitignore` 已忽略常见类型）。
+- 禁止在代码、notebook、截图或 Issue 中粘贴 Tushare/IBKR 密钥。
 - 每次 push 前先 `git pull`，减少冲突。
 - 冲突时先手动解决冲突文件，再提交合并。
 

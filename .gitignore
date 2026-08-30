@@ -19,6 +19,8 @@ data/
 
 # 敏感信息
 .env
+.env.*
+!.env.example
 *.pem
 *.key
 
@@ -32,3 +34,8 @@ Thumbs.db
 *.log
 dist/
 build/
+runs/
+.pytest_cache/
+.ruff_cache/
+coverage.xml
+.coverage
