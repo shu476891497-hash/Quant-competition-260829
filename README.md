@@ -2,6 +2,9 @@
 
 面向 IBKR 模拟盘比赛的轻量期货 CTA 研究与回测框架。
 
+只想研究一个因子、不想安装完整项目结构的队员，可以只下载根目录的
+[`single_file_backtest.py`](single_file_backtest.py)，安装 pandas/numpy 后直接运行。
+
 ```text
 Data → Factor → Signal → Target Position → Actual Position → PnL → Metrics
 ```
