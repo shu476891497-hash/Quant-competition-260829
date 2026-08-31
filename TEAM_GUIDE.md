@@ -58,6 +58,11 @@ python -m pytest
 `backtest/engine.py`。如果确实需要改变统一回测口径，应单独发 PR 并由至少一名
 核心框架负责人复核。
 
+纯因子研究统一调用 `quantcta.research.evaluate_factor`，禁止各自重新实现未来
+收益标签。日线因子默认 `availability_lag=1`，必须传入实际前月合约代码以自动
+剔除跨换月样本。先报告 IC/RankIC/Newey-West t/Q5-Q1；形成明确 Signal 后才进入
+回测引擎讨论 Sharpe、成本和风控。
+
 ## 四、提交规范
 
 - 提交信息简短描述改了什么（中文或英文均可）。

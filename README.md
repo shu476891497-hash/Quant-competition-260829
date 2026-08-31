@@ -29,6 +29,7 @@ python -m venv .venv
 python -m pip install -e ".[dev]"
 pytest
 python examples/run_synthetic.py
+python examples/run_factor_research.py
 ```
 
 需要 Tushare 时安装 `.[tushare,dev]`。令牌只通过环境变量
@@ -43,6 +44,22 @@ python examples/run_synthetic.py
 5. factor 不直接计算仓位或 PnL。
 
 不需要修改 backtest engine，也不需要继承基类。
+
+统一因子检验只需一行：
+
+```python
+result = evaluate_factor(
+    factor,
+    front_contract_close,
+    horizons=(1, 5, 21),
+    availability_lag=1,
+    contract_ids=front_contract_symbol,
+    factor_name="curve_curvature",
+)
+```
+
+`availability_lag` 强制至少为 1；合约代码变化的标签会自动删除。输出统一为
+样本数、IC、RankIC、Newey-West t 值和 Q5-Q1，不计算策略 Sharpe。
 
 ## 文档
 
