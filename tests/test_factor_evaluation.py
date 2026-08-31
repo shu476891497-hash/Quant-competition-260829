@@ -1,7 +1,7 @@
 import numpy as np
 import pandas as pd
 
-from quantcta.research import evaluate_factor, forward_returns
+from quantcta.research import evaluate_factor, evaluate_factor_by_year, forward_returns
 
 
 def test_forward_return_uses_next_bar_as_entry() -> None:
@@ -64,3 +64,32 @@ def test_evaluate_factor_returns_team_standard_columns() -> None:
         "q5_minus_q1_bps",
         "availability_lag",
     }
+
+
+def test_evaluate_factor_by_year_keeps_year_labels() -> None:
+    index = pd.date_range("2020-01-01", "2021-12-31", freq="B", tz="UTC")
+    prices = pd.DataFrame({"NQ": 100.0 * np.exp(np.arange(len(index)) * 0.001)}, index=index)
+    factor = pd.DataFrame({"NQ": np.sin(np.arange(len(index)) / 9.0)}, index=index)
+
+    result = evaluate_factor_by_year(
+        factor,
+        prices,
+        horizons=(5,),
+        factor_name="curve_curvature",
+        min_samples=20,
+    )
+
+    assert result["year"].tolist() == [2020, 2021]
+    assert result["n"].iloc[0] == len(index[index.year == 2020])
+
+
+def test_evaluate_factor_by_year_requires_datetime_index() -> None:
+    prices = pd.DataFrame({"NQ": np.linspace(100.0, 130.0, 40)})
+    factor = pd.DataFrame({"NQ": np.sin(np.arange(40))})
+
+    try:
+        evaluate_factor_by_year(factor, prices, horizons=(1,), min_samples=20)
+    except TypeError as error:
+        assert "DatetimeIndex" in str(error)
+    else:
+        raise AssertionError("yearly evaluation should require calendar dates")

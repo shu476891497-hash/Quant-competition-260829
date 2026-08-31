@@ -63,6 +63,11 @@ python -m pytest
 剔除跨换月样本。先报告 IC/RankIC/Newey-West t/Q5-Q1；形成明确 Signal 后才进入
 回测引擎讨论 Sharpe、成本和风控。
 
+提交因子结论前还必须附上：`evaluate_factor_by_year` 的年度结果、
+`factor_autocorrelation` 的 1/5/21 bar 衰减，以及原始因子和
+`causal_winsorize` 版本的对照。用 `save_factor_results` 保存 manifest，
+不要只发截图或手抄一个最好看的数字。
+
 ## 四、提交规范
 
 - 提交信息简短描述改了什么（中文或英文均可）。

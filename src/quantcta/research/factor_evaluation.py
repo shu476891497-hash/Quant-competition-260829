@@ -72,36 +72,107 @@ def evaluate_factor(
             availability_lag=availability_lag,
             contract_ids=contract_ids,
         )
-        for symbol in prices.columns:
-            sample = pd.concat(
-                {"factor": factor[symbol], "forward_return": labels[symbol]}, axis=1
-            ).replace([np.inf, -np.inf], np.nan).dropna()
-            if len(sample) < min_samples or sample["factor"].nunique() < 2:
-                continue
-            x = sample["factor"].to_numpy(dtype=float)
-            y = sample["forward_return"].to_numpy(dtype=float)
-            ic = float(np.corrcoef(x, y)[0, 1])
-            rank_ic = float(
-                sample["factor"].rank(method="average").corr(
-                    sample["forward_return"].rank(method="average")
-                )
+        records.extend(
+            _evaluate_labels(
+                factor,
+                labels,
+                horizon=horizon,
+                availability_lag=availability_lag,
+                factor_name=factor_name,
+                min_samples=min_samples,
             )
-            low, high = np.quantile(x, [0.2, 0.8])
-            spread = float(np.mean(y[x >= high]) - np.mean(y[x <= low])) * 10_000.0
-            records.append(
-                {
-                    "factor": factor_name,
-                    "symbol": str(symbol),
-                    "horizon": horizon,
-                    "n": len(sample),
-                    "ic": ic,
-                    "rank_ic": rank_ic,
-                    "newey_west_t": _newey_west_ic_t(x, y, horizon - 1),
-                    "q5_minus_q1_bps": spread,
-                    "availability_lag": availability_lag,
-                }
-            )
+        )
     return pd.DataFrame.from_records(records)
+
+
+def evaluate_factor_by_year(
+    factor: pd.DataFrame,
+    prices: pd.DataFrame,
+    *,
+    horizons: Iterable[int] = (1, 5, 21),
+    availability_lag: int = 1,
+    contract_ids: pd.DataFrame | None = None,
+    factor_name: str = "factor",
+    min_samples: int = 20,
+) -> pd.DataFrame:
+    """Evaluate decisions from each calendar year without truncating their labels."""
+
+    _validate_numeric_frame(factor, "factor")
+    _validate_numeric_frame(prices, "prices")
+    _require_aligned(prices, factor)
+    if not isinstance(factor.index, pd.DatetimeIndex):
+        raise TypeError("yearly evaluation requires a DatetimeIndex")
+    if min_samples < 20:
+        raise ValueError("min_samples must be at least 20")
+    requested_horizons = tuple(dict.fromkeys(int(value) for value in horizons))
+    if not requested_horizons:
+        raise ValueError("horizons cannot be empty")
+
+    records: list[dict[str, float | int | str]] = []
+    years = factor.index.year
+    for horizon in requested_horizons:
+        labels = forward_returns(
+            prices,
+            horizon,
+            availability_lag=availability_lag,
+            contract_ids=contract_ids,
+        )
+        for year in sorted(set(years)):
+            mask = years == year
+            year_records = _evaluate_labels(
+                factor.loc[mask],
+                labels.loc[mask],
+                horizon=horizon,
+                availability_lag=availability_lag,
+                factor_name=factor_name,
+                min_samples=min_samples,
+            )
+            for record in year_records:
+                record["year"] = int(year)
+            records.extend(year_records)
+    return pd.DataFrame.from_records(records)
+
+
+def _evaluate_labels(
+    factor: pd.DataFrame,
+    labels: pd.DataFrame,
+    *,
+    horizon: int,
+    availability_lag: int,
+    factor_name: str,
+    min_samples: int,
+) -> list[dict[str, float | int | str]]:
+    records: list[dict[str, float | int | str]] = []
+    for symbol in factor.columns:
+        sample = pd.concat(
+            {"factor": factor[symbol], "forward_return": labels[symbol]}, axis=1
+        ).replace([np.inf, -np.inf], np.nan).dropna()
+        if len(sample) < min_samples or sample["factor"].nunique() < 2:
+            continue
+        x = sample["factor"].to_numpy(dtype=float)
+        y = sample["forward_return"].to_numpy(dtype=float)
+        ic = float(np.corrcoef(x, y)[0, 1])
+        rank_ic = float(
+            sample["factor"].rank(method="average").corr(
+                sample["forward_return"].rank(method="average")
+            )
+        )
+        low, high = np.quantile(x, [0.2, 0.8])
+        spread = float(np.mean(y[x >= high]) - np.mean(y[x <= low])) * 10_000.0
+        records.append(
+            {
+                "factor": factor_name,
+                "symbol": str(symbol),
+                "horizon": horizon,
+                "n": len(sample),
+                "ic": ic,
+                "rank_ic": rank_ic,
+                "newey_west_t": _newey_west_ic_t(x, y, horizon - 1),
+                "q5_minus_q1_bps": spread,
+                "availability_lag": availability_lag,
+            }
+        )
+    return records
 
 
 def _newey_west_ic_t(x: np.ndarray, y: np.ndarray, lag: int) -> float:

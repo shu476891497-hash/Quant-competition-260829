@@ -61,6 +61,15 @@ result = evaluate_factor(
 `availability_lag` 强制至少为 1；合约代码变化的标签会自动删除。输出统一为
 样本数、IC、RankIC、Newey-West t 值和 Q5-Q1，不计算策略 Sharpe。
 
+稳健性检查继续使用三个小函数：
+
+- `evaluate_factor_by_year`：按因子决策年份输出同一套指标；
+- `causal_winsorize`：只用当前时点之前的滚动分位数处理极端值；
+- `factor_autocorrelation`：检查因子衰减和重复持仓风险。
+
+`save_factor_results` 会把指标和数据源、进场延迟、换月规则等假设保存到同一个
+运行目录。完整用法见 `examples/run_factor_research.py`。
+
 ## 文档
 
 - [架构与时间契约](docs/ARCHITECTURE.md)

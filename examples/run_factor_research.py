@@ -4,7 +4,13 @@ import numpy as np
 import pandas as pd
 
 from quantcta.factors import annualized_curve_curvature
-from quantcta.research import evaluate_factor
+from quantcta.research import (
+    causal_winsorize,
+    evaluate_factor,
+    evaluate_factor_by_year,
+    factor_autocorrelation,
+    save_factor_results,
+)
 
 index = pd.date_range("2020-01-01", periods=500, freq="B", tz="UTC")
 trend = 100.0 * np.exp(np.arange(len(index)) * 0.0002)
@@ -34,3 +40,28 @@ result = evaluate_factor(
     factor_name="curve_curvature",
 )
 print(result.to_string(index=False))
+
+winsorized = causal_winsorize(factor, window=126, min_periods=60)
+yearly = evaluate_factor_by_year(
+    winsorized,
+    front,
+    horizons=(1, 5, 21),
+    availability_lag=1,
+    contract_ids=contract_ids,
+    factor_name="curve_curvature_winsorized",
+)
+autocorrelation = factor_autocorrelation(factor)
+output = save_factor_results(
+    result,
+    "runs/example_factor",
+    metadata={
+        "data_source": "synthetic",
+        "entry_rule": "next bar",
+        "roll_rule": "same contract from decision through exit",
+    },
+)
+print("\nYear-by-year robustness:")
+print(yearly.to_string(index=False))
+print("\nFactor autocorrelation:")
+print(autocorrelation.to_string(index=False))
+print(f"\nSaved auditable result to {output}")
