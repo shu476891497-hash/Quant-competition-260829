@@ -12,6 +12,7 @@ env/
 # 数据文件（原始数据默认不入库，量大且易变）
 data/
 *.csv
+!results/*.csv
 *.parquet
 *.h5
 *.pkl

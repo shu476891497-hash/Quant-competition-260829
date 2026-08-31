@@ -8,7 +8,12 @@ from quantcta.factors import (
     annualized_curve_curvature,
     cot_crowding_zscore,
     curve_carry_zscore,
+    front_open_interest_share,
+    next_to_front_open_interest_ratio,
+    normalized_curve_curvature,
+    open_interest_weighted_maturity,
     price_oi_confirmation,
+    volume_minus_open_interest_maturity,
     volume_to_open_interest,
 )
 
@@ -77,6 +82,38 @@ def test_volume_to_open_interest() -> None:
     oi = pd.DataFrame({"ES": [1_000.0, 1_200.0]}, index=index)
     result = volume_to_open_interest(volume, oi)
     assert result["ES"].tolist() == [0.2, 0.25]
+
+
+def test_normalized_curvature_is_dimensionless() -> None:
+    index = pd.date_range("2025-01-01", periods=1, tz="UTC")
+    front = pd.DataFrame({"NQ": [100.0]}, index=index)
+    middle = pd.DataFrame({"NQ": [99.0]}, index=index)
+    back = pd.DataFrame({"NQ": [98.0]}, index=index)
+    expiries = [
+        pd.DataFrame({"NQ": index + pd.Timedelta(days=days)}, index=index)
+        for days in (30, 90, 180)
+    ]
+    result = normalized_curve_curvature(
+        front, middle, back, expiries[0], expiries[1], expiries[2]
+    )
+    assert -1 <= result.iloc[0, 0] <= 1
+
+
+def test_curve_position_maturity_factors() -> None:
+    index = pd.date_range("2025-01-01", periods=1, tz="UTC")
+    dte = pd.DataFrame([[30.0, 90.0, 180.0]], index=index, columns=["F1", "F2", "F3"])
+    oi = pd.DataFrame([[60.0, 30.0, 10.0]], index=index, columns=dte.columns)
+    volume = pd.DataFrame([[10.0, 30.0, 60.0]], index=index, columns=dte.columns)
+
+    maturity = open_interest_weighted_maturity(dte, oi)
+    front_share = front_open_interest_share(oi)
+    ratio = next_to_front_open_interest_ratio(oi)
+    flow_gap = volume_minus_open_interest_maturity(dte, volume, oi)
+
+    assert np.isclose(maturity.iloc[0], 63.0)
+    assert np.isclose(front_share.iloc[0], 0.6)
+    assert np.isclose(ratio.iloc[0], np.log(0.5))
+    assert flow_gap.iloc[0] > 0
 
 
 def test_price_oi_confirmation_direction() -> None:

@@ -4,6 +4,11 @@ from quantcta.factors.curve import (
     annualized_curve_carry,
     annualized_curve_curvature,
     curve_carry_zscore,
+    front_open_interest_share,
+    next_to_front_open_interest_ratio,
+    normalized_curve_curvature,
+    open_interest_weighted_maturity,
+    volume_minus_open_interest_maturity,
     volume_to_open_interest,
 )
 from quantcta.factors.positioning import (
@@ -23,7 +28,12 @@ __all__ = [
     "cot_net_share",
     "curve_carry_zscore",
     "dual_ema_momentum",
+    "front_open_interest_share",
+    "next_to_front_open_interest_ratio",
+    "normalized_curve_curvature",
     "open_interest_change",
+    "open_interest_weighted_maturity",
     "price_oi_confirmation",
+    "volume_minus_open_interest_maturity",
     "volume_to_open_interest",
 ]
