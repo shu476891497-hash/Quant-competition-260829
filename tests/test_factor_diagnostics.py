@@ -55,4 +55,5 @@ def test_save_factor_results_writes_metrics_and_manifest(tmp_path) -> None:
     manifest = json.loads((output / "manifest.json").read_text(encoding="utf-8"))
     assert manifest["schema"] == "quantcta-factor-research-v1"
     assert manifest["availability_lags"] == [1]
+    assert not manifest["multiple_testing_adjusted"]
     assert manifest["metadata"]["contract_rule"] == "same-contract"

@@ -5,6 +5,7 @@ import pandas as pd
 
 from quantcta.factors import annualized_curve_curvature
 from quantcta.research import (
+    adjust_multiple_tests,
     causal_winsorize,
     evaluate_factor,
     evaluate_factor_by_year,
@@ -39,7 +40,8 @@ result = evaluate_factor(
     contract_ids=contract_ids,
     factor_name="curve_curvature",
 )
-print(result.to_string(index=False))
+adjusted_result = adjust_multiple_tests(result)
+print(adjusted_result.to_string(index=False))
 
 winsorized = causal_winsorize(factor, window=126, min_periods=60)
 yearly = evaluate_factor_by_year(
@@ -52,12 +54,13 @@ yearly = evaluate_factor_by_year(
 )
 autocorrelation = factor_autocorrelation(factor)
 output = save_factor_results(
-    result,
+    adjusted_result,
     "runs/example_factor",
     metadata={
         "data_source": "synthetic",
         "entry_rule": "next bar",
         "roll_rule": "same contract from decision through exit",
+        "hypothesis_family": "all rows in this example run",
     },
 )
 print("\nYear-by-year robustness:")

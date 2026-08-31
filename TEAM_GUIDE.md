@@ -68,6 +68,10 @@ python -m pytest
 `causal_winsorize` 版本的对照。用 `save_factor_results` 保存 manifest，
 不要只发截图或手抄一个最好看的数字。
 
+同一研究批次尝试过的失败因子也必须保留，并整体调用
+`adjust_multiple_tests`。禁止删除失败项后再计算 q 值。发现阶段默认报告
+10% FDR；未通过只能标记为候选，不得写成已验证 alpha。
+
 ## 四、提交规范
 
 - 提交信息简短描述改了什么（中文或英文均可）。

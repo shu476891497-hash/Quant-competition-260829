@@ -46,6 +46,11 @@ def save_factor_results(
         "availability_lags": sorted(
             int(value) for value in results["availability_lag"].unique()
         ),
+        "multiple_testing_adjusted": {
+            "p_value",
+            "bh_q_value",
+            "passes_fdr",
+        }.issubset(results.columns),
         "metadata": dict(metadata),
     }
     (output / "manifest.json").write_text(

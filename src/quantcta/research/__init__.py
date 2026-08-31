@@ -7,8 +7,10 @@ from quantcta.research.factor_evaluation import (
     evaluate_factor_by_year,
     forward_returns,
 )
+from quantcta.research.multiple_testing import adjust_multiple_tests
 
 __all__ = [
+    "adjust_multiple_tests",
     "causal_winsorize",
     "evaluate_factor",
     "evaluate_factor_by_year",

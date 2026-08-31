@@ -70,6 +70,10 @@ result = evaluate_factor(
 `save_factor_results` 会把指标和数据源、进场延迟、换月规则等假设保存到同一个
 运行目录。完整用法见 `examples/run_factor_research.py`。
 
+同一轮尝试的所有 factor×symbol×horizon 结果必须先合并，再调用
+`adjust_multiple_tests` 做 Benjamini-Hochberg FDR 校正。只把赢家传进去属于
+选择后偏差。
+
 ## 文档
 
 - [架构与时间契约](docs/ARCHITECTURE.md)
