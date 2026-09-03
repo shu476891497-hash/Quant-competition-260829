@@ -76,6 +76,11 @@ result = evaluate_factor(
 
 ## 文档
 
+- [美股股指期货三因子独立研究项目](us_index_futures_factors/README.md)：
+  ES/NQ/YM/RTY 的 Put/Call、FRED 流动性和 CFTC 持仓研究。
+  此目录独立安装、运行和测试，不改动 `single_file_backtest.py` 或 CTA 引擎。
+  不包含原始行情缓存；结果是本地研究代理，尚未通过 QuantConnect 平台验证。
+
 - [架构与时间契约](docs/ARCHITECTURE.md)
 - [数据源选择](docs/DATA_SOURCES.md)
 - [团队协作](TEAM_GUIDE.md)

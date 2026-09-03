@@ -1,0 +1,38 @@
+[
+  {
+    "family": "put_call",
+    "candidate": "pcr_deviation",
+    "orientation": 1,
+    "selection_period": "2010-06-15/2018-12-31",
+    "selection_symbols": [
+      "ES",
+      "NQ",
+      "YM"
+    ],
+    "horizon": 5
+  },
+  {
+    "family": "liquidity",
+    "candidate": "liq_net_rrp",
+    "orientation": 1,
+    "selection_period": "2010-06-15/2018-12-31",
+    "selection_symbols": [
+      "ES",
+      "NQ",
+      "YM"
+    ],
+    "horizon": 5
+  },
+  {
+    "family": "positioning",
+    "candidate": "cot_divergence",
+    "orientation": 1,
+    "selection_period": "2010-06-15/2018-12-31",
+    "selection_symbols": [
+      "ES",
+      "NQ",
+      "YM"
+    ],
+    "horizon": 5
+  }
+]

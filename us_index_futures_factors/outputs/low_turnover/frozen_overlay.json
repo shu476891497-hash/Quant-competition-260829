@@ -1,0 +1,70 @@
+{
+  "selection_rule": "highest IS Sharpe subject to annual one-way turnover < 30; validation and OOS do not select",
+  "cost_bps": 1.0,
+  "selected": {
+    "name": "top2_liquidity_vol",
+    "top_n": 2,
+    "trend_windows": [
+      60,
+      120,
+      200
+    ],
+    "liquidity_halflife": 5,
+    "liquidity_threshold": 0.5,
+    "allocation_interval": 10,
+    "volatility_window": 40,
+    "volatility_target": 0.1,
+    "leverage_cap": 1.0,
+    "volatility_interval": 5
+  },
+  "preregistered": [
+    {
+      "name": "top2_liquidity_vol",
+      "top_n": 2,
+      "trend_windows": [
+        60,
+        120,
+        200
+      ],
+      "liquidity_halflife": 5,
+      "liquidity_threshold": 0.5,
+      "allocation_interval": 10,
+      "volatility_window": 40,
+      "volatility_target": 0.1,
+      "leverage_cap": 1.0,
+      "volatility_interval": 5
+    },
+    {
+      "name": "top1_liquidity_vol",
+      "top_n": 1,
+      "trend_windows": [
+        60,
+        120,
+        200
+      ],
+      "liquidity_halflife": 5,
+      "liquidity_threshold": 0.5,
+      "allocation_interval": 10,
+      "volatility_window": 40,
+      "volatility_target": 0.1,
+      "leverage_cap": 1.0,
+      "volatility_interval": 5
+    },
+    {
+      "name": "top2_liquidity_monthly",
+      "top_n": 2,
+      "trend_windows": [
+        60,
+        120,
+        200
+      ],
+      "liquidity_halflife": 5,
+      "liquidity_threshold": 0.5,
+      "allocation_interval": 21,
+      "volatility_window": 40,
+      "volatility_target": 0.1,
+      "leverage_cap": 1.0,
+      "volatility_interval": 21
+    }
+  ]
+}
